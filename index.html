@@ -101,55 +101,82 @@
     </main>
   </div>
 
-  <script>
-    const cube = document.getElementById("cube");
-    let rotationX = 20;
-    let rotationY = 30;
-    let autoSpin = true;
-    let dragging = false;
-    let lastX, lastY;
+ <script>
+  const cube = document.getElementById("cube");
+  let rotationX = 20;
+  let rotationY = 30;
+  let autoSpin = true;
+  let dragging = false;
+  let lastX, lastY;
 
-    function updateCube() {
-      cube.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+  function updateCube() {
+    cube.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+  }
+
+  function animate() {
+    if (autoSpin && !dragging) {
+      rotationY += 0.1; // slow spin
+      rotationX += 0.05;
+      updateCube();
     }
+    requestAnimationFrame(animate);
+  }
 
-    function animate() {
-      if (autoSpin && !dragging) {
-        rotationY += 0.1; // slow spin
-        rotationX += 0.05;
-        updateCube();
-      }
-      requestAnimationFrame(animate);
+  // Mouse drag
+  cube.parentElement.addEventListener("mousedown", (e) => {
+    dragging = true;
+    autoSpin = false;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    cube.parentElement.style.cursor = "grabbing";
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (dragging) {
+      dragging = false;
+      autoSpin = true;
+      cube.parentElement.style.cursor = "grab";
     }
+  });
 
-    // Mouse drag
-    cube.parentElement.addEventListener("mousedown", (e) => {
-      dragging = true;
-      autoSpin = false;
+  document.addEventListener("mousemove", (e) => {
+    if (dragging) {
+      const deltaX = e.clientX - lastX;
+      const deltaY = e.clientY - lastY;
+      rotationY += deltaX * 0.3;
+      rotationX -= deltaY * 0.3;
+      updateCube();
       lastX = e.clientX;
       lastY = e.clientY;
-      cube.parentElement.style.cursor = "grabbing";
-    });
+    }
+  });
 
-    document.addEventListener("mouseup", () => {
-      if (dragging) {
-        dragging = false;
-        autoSpin = true;
-        cube.parentElement.style.cursor = "grab";
-      }
-    });
+  // Touch support
+  cube.parentElement.addEventListener("touchstart", (e) => {
+    dragging = true;
+    autoSpin = false;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+  });
 
-    document.addEventListener("mousemove", (e) => {
-      if (dragging) {
-        const deltaX = e.clientX - lastX;
-        const deltaY = e.clientY - lastY;
-        rotationY += deltaX * 0.3;
-        rotationX -= deltaY * 0.3;
-        updateCube();
-        lastX = e.clientX;
-        lastY = e.clientY;
-      }
-    });
+  document.addEventListener("touchend", () => {
+    dragging = false;
+    autoSpin = true;
+  });
 
-    // Touch support
-    cube.parentElement.addEventListener("touchstart", (e) => {
+  document.addEventListener("touchmove", (e) => {
+    if (dragging) {
+      const deltaX = e.touches[0].clientX - lastX;
+      const deltaY = e.touches[0].clientY - lastY;
+      rotationY += deltaX * 0.3;
+      rotationX -= deltaY * 0.3;
+      updateCube();
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+    }
+  });
+
+  // Initialize
+  updateCube();
+  animate();
+</script>
