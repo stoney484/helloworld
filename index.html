@@ -30,12 +30,15 @@
       perspective: 800px;
       cursor: grab;
     }
-    .cube {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-    }
+.cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(20deg) rotateY(30deg); /* ✅ Initial rotation */
+  transition: transform 0.1s linear; /* smooth dragging */
+}
+
     .cube-face {
       position: absolute;
       width: 250px;
@@ -109,9 +112,10 @@
   let dragging = false;
   let lastX, lastY;
 
-  function updateCube() {
-    cube.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
-  }
+function updateCube() {
+  cube.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+}
+
 
   function animate() {
     if (autoSpin && !dragging) {
